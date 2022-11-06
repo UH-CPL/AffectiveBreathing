@@ -19,9 +19,11 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.feature_selection import RFE
 from sklearn.linear_model import RidgeCV, LassoCV, Ridge, Lasso
-#Loading the dataset
-filename = 'featuresNew_11_cross.csv'                              
-df = pd.read_csv(filename,header=0)
+#Loading the feature dataset
+#generate the cross correlation matrix Figure
+inputfilename = 'featuresNew_11_cross.csv' 
+outputImagename = 'Figure8'                             
+df = pd.read_csv(inputfilename,header=0)
 df = df.dropna()
 #-1 means RB treatment, we remove RB treatments since it is baseline
 df.drop(df[df['M_Stress']==-1].index, inplace = True)
@@ -32,7 +34,7 @@ print("data is ///////////////////////")
 print(df.shape)
 print(list(df.columns))
 
-if 'features' not in filename:
+if 'features' not in inputfilename:
 #cols=['VolSec','RTQ','RTQ_STD','BR','Height STD','Length']
     df = df.drop(['PR_Stress','ST_Stress','DT_Stress','M_Stress'],1)
     df = df.drop(['Mean','Median','Std','Skewness','Mean STD','Median_STD','STD_STD','Skewness_STD'], 1)
@@ -85,7 +87,7 @@ if isRaw == True:
     drawPatch(6,2,borderColor,borderWidth,fillFlag,ax)
     drawPatch(12,2,borderColor,borderWidth,fillFlag,ax)
     drawPatch(16,2,borderColor,borderWidth,fillFlag,ax)
-    plt.savefig('Figure8.png', format="png",dpi=600)
+    plt.savefig(outputImagename+'.png', format="png",dpi=600)
 else:
-    plt.savefig('CrossMatrixFinal.eps', format="eps",dpi=600)
+    plt.savefig(outputImagename+'.eps', format="eps",dpi=600)
 plt.show()
