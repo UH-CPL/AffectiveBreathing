@@ -8,11 +8,10 @@ sampleHz = 25
 #input file contains breathing chest stripe length recorded per 1/25 second.
 input_filename = '..\\data\\BR_Filtered_Raw.csv' 
 #output file contains 18 features of all records by participant, by treatment
-output_filename = 'featuresNew_11_cross.csv'
+output_filename = 'featuresNew_12_cross.csv'
 #Subject was named from T003 to T178
 startIndx = 3
-endIndx = 178
-
+endIndx = 179
 
 def butter_bandpass(lowcut, highcut, fs, order=5):
     return butter(order, [lowcut, highcut], fs=fs, btype='band')
@@ -281,7 +280,10 @@ def main(filename, subject, queryString, baseDict):
     plt.axhline(-baseDict['s_threshold']/scale, color='green',linestyle='dashed', linewidth=1)
     plt.legend(loc="best")
     title = 'Participant '+subject+' Breathing Cycle Detection - '+tr+' Session'
-    imgname = subject+'_'+tr
+    if tr == 'DT':
+        imgname = subject+'-LT'
+    else:
+        imgname = subject+'-'+tr
     plt.title(title)
     plt.savefig('CycleDetection_'+imgname+'_a.png', format='png',dpi=300)
     print('save fig:' + 'CycleDetection_'+imgname+'_a.png')
@@ -289,9 +291,12 @@ def main(filename, subject, queryString, baseDict):
     
     waveMatrix = []
     maxLength = 0
-    width = 6
+    width = 5.8
     height = 15
-    plt.figure(figsize=(width,height))
+    #figure for new waveform plots
+    fig = plt.figure(figsize=(width,height))
+    #change font size bigger
+    plt.rcParams.update({'font.size': 18})
     
     #features calculation
     #volumes on original signals (wave)
@@ -349,7 +354,9 @@ def main(filename, subject, queryString, baseDict):
         maxLength =max(maxLength, minIndices[i+1] - minIndices[i])
         waveMatrix.append(wave)
         wave =  [x + 3000*i for x in wave]
-        plt.plot(wave, label='Waveform' + str(i))
+        x = [i/25 for i in range(len(wave))]
+        y = [i/100000 for i in wave]
+        plt.plot(x, y, label='Waveform' + str(i))
     
     #feature calculation
     VolCycle = getMeanWithoutMaxMin(VolCycleList)
@@ -402,13 +409,14 @@ def main(filename, subject, queryString, baseDict):
         stdDict['VolCycleSTD_base'] = VolCycle_STD
         stdDict['VolSec_STD_base'] = VolCycle_STD
 
-    plt.xlabel("Time [1/25s]")
-    plt.ylabel("Rib Cage [um]")
-    
-    plt.title(imgname+' Waveform plots')
-    plt.savefig('CycleDetection_'+imgname+'_b.png', format='png',dpi=300)
+    label_size = 22
+    plt.xlabel("Time [s]", fontsize=label_size)
+    plt.ylabel("Rib Cage [cm]",fontsize=label_size)    
+    plt.title(imgname+' Waveform', fontsize=label_size)
+    plt.savefig('CycleDetection-'+imgname+'_b.png', format='png',dpi=290)
     print('save fig:' + 'CycleDetection_'+imgname+'_b.png')
     plt.show()
+    plt.clf()
     
     MLStress = -1
     if tr=='ST':
@@ -424,7 +432,7 @@ def main(filename, subject, queryString, baseDict):
                 tr, MLStress]
     
     isFileExist = exists(output_filename)
-    writeCvsLine(features)
+    writeCvsLine(features,isFileExist)
     del data
 
 subjects = []
@@ -440,6 +448,7 @@ for i in range(startIndx, endIndx):
         subjectStr = 'T'+numStr
     subjects.append(subjectStr)
 
+print(subjects)
 th_scale = 5
 
 from os.path import exists
