@@ -452,7 +452,12 @@ print(subjects)
 th_scale = 5
 
 from os.path import exists
+import os
 #process one subject a time
+
+if  exists(output_filename):
+    os.remove(output_filename)
+
 for s in subjects:       
     #check if a file exists
     if exists(input_filename)!=True: 
