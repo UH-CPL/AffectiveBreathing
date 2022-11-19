@@ -235,7 +235,7 @@ if hasGridline:
 else:
     plt.grid(False)
 
-plt.savefig('Figure9.png', format="png",dpi=300)
+plt.savefig('Figure10.png', format="png",dpi=300)
 plt.show()
 
 # #############################################################################
@@ -315,7 +315,7 @@ for m in myY:
         plt.grid(False)
     
     num_2_letter = ['a','b','c']
-    figureName = 'Figure10'+str(num_2_letter[counter])+'.png'
+    figureName = 'Figure11'+str(num_2_letter[counter])+'.png'
     print(figureName+' saved!')
     plt.savefig(figureName, format="png",dpi=600)
     plt.show()

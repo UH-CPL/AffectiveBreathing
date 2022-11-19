@@ -22,7 +22,7 @@ from sklearn.linear_model import RidgeCV, LassoCV, Ridge, Lasso
 #Loading the feature dataset
 #generate the cross correlation matrix Figure
 inputfilename = 'featuresNew_12_cross.csv' 
-outputImagename = 'Figure8'                             
+outputImagename = 'Figure9'                             
 df = pd.read_csv(inputfilename,header=0)
 df = df.dropna()
 #-1 means RB treatment, we remove RB treatments since it is baseline
