@@ -2,6 +2,7 @@
 """
 @author: sunnf
 """  
+import os
 from scipy.signal import butter, lfilter
 sampleHz = 25
 
@@ -9,6 +10,11 @@ sampleHz = 25
 input_filename = '..\\data\\BR_Filtered_Raw.csv' 
 #output file contains 18 features of all records by participant, by treatment
 output_filename = 'featuresNew_12_cross.csv'
+#waveformImages folder contains all waveform images of a participant in a treatment session
+waveformfolder = 'waveformImages'
+if os.path.isdir (waveformfolder)!=True:
+    os.makedirs(waveformfolder)
+
 #Subject was named from T003 to T178
 startIndx = 3
 endIndx = 179
@@ -285,7 +291,7 @@ def main(filename, subject, queryString, baseDict):
     else:
         imgname = subject+'-'+tr
     plt.title(title)
-    plt.savefig('CycleDetection_'+imgname+'_a.png', format='png',dpi=300)
+    plt.savefig(waveformfolder+'\\CycleDetection_'+imgname+'_a.png', format='png',dpi=300)
     print('save fig:' + 'CycleDetection_'+imgname+'_a.png')
     plt.show()
     
@@ -413,7 +419,7 @@ def main(filename, subject, queryString, baseDict):
     plt.xlabel("Time [s]", fontsize=label_size)
     plt.ylabel("Rib Cage [cm]",fontsize=label_size)    
     plt.title(imgname+' Waveform', fontsize=label_size)
-    plt.savefig('CycleDetection-'+imgname+'_b.png', format='png',dpi=290)
+    plt.savefig(waveformfolder + '\\CycleDetection-'+imgname+'_b.png', format='png',dpi=290)
     print('save fig:' + 'CycleDetection_'+imgname+'_b.png')
     plt.show()
     plt.clf()
