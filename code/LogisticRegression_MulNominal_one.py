@@ -20,8 +20,6 @@ sns.set(style="white")
 sns.set(style="whitegrid", color_codes=True)
 
 csvname = 'featuresNew_12_cross.csv'
-#csvname = 'featuresNew_12_cross_bkup2.csv'
-#csvname = 'featuresNew_9_cross.csv'
 
 isNewFile = False
 if 'cross' in csvname:
@@ -30,9 +28,6 @@ if 'cross' in csvname:
 data = pd.read_csv(csvname,header=0)
 #log transform wav_avg
 
-# if 'WL_AVG' in data.columns:
-#     data['WL_AVG_LOG'] = np.log2(data['WL_AVG'])
-
 data = data.dropna()
 #-1 means RB treatment, we remove RB treatments since it is baseline
 data.drop(data[data['M_Stress']==-1].index, inplace = True)
@@ -40,15 +35,8 @@ data.drop(data[data['M_Stress']==-1].index, inplace = True)
 data.drop(data[data['BVC_NORM']== 0].index, inplace = True)
 data = data.sort_values(by=['M_Stress','Subject'])
 
-#data.to_csv('featuresNew_12_cross_preprocessed.csv',index=False)  
-#data = pd.read_csv('featuresNew_12_cross_preprocessed.csv',header=0)
-#convert data frame to derive standized Beta coefficients which is not working
-#https://stackoverflow.com/questions/50842397/how-to-get-standardised-beta-coefficients-for-multiple-linear-regression-using
-#data = data.select_dtypes(include=[np.number]).dropna().apply(stats.zscore)
 print("data is ///////////////////////")
 print(data.shape)
-# print(list(data.columns))
-# print(data.head(5))
 
 if isNewFile == True:
     targetCol = 'M_Stress'
@@ -69,34 +57,22 @@ pct_of_sub = count_sub/(count_no_sub+count_sub)
 print("percentage of stress", pct_of_sub*100)
 
 # #create dummy variables
-# cat_vars=['job','marital','education','default','housing','loan','contact','month','day_of_week','poutcome']
-# for var in cat_vars:
-#     cat_list='var'+'_'+var
-#     cat_list = pd.get_dummies(data[var], prefix=var)
-#     data1=data.join(cat_list)
-#     data=data1
 cat_vars=['Subject','Treatment']
 data_vars=data.columns.values.tolist()
 to_keep=[i for i in data_vars if i not in cat_vars]
 #selected 8 features
 if isNewFile != True:
-    #to_keep=['Height_STD','VolSec_Ratio','RTQ','RTQ_STD','RTQ_Ratio','BR','BR_STD', 'BR_Ratio','Mean',targetCol]
     to_keep=['VolCycle','VolCycle_STD','VolCycle_Ratio','VolSec','VolSec_Ratio','RTQ','RTQ_STD','RTQ_Ratio','BR','BR_STD','BR_Ratio','Height','Height_STD','Height_Ratio','Length','Length_STD','Length_Ratio',targetCol]
 else: 
     to_keep=['BVC_AVG','BVT_AVG','WA_AVG','BVC_SD','WA_SD','BVC_NORM','BVT_NORM','WA_NORM','BVC_SD_NORM','WA_SD_NORM','RTQ_AVG','RTQ_SD','RTQ_NORM','RTQ_SD_NORM','BR_AVG','WL_AVG','WL_SD','BR_SD','BR_NORM','WL_NORM','WL_SD_NORM','BR_SD_NORM',targetCol]
 
 data_final=data[to_keep]
-# data_final.columns.values
-# print("data_final is ///////////////////////")
-# print(list(data_final.columns))
 
 #over sample the NO data records, so the yes and no samples 
 # are having balanced numbers
 X = data_final.loc[:, data_final.columns != targetCol]
 y = data_final.loc[:, data_final.columns == targetCol]
-#PYTHON 3.8
-#pip install -U imbalanced-learn
-#conda install -c conda-forge imbalanced-learn
+
 from imblearn.over_sampling import SMOTE
 os = SMOTE(random_state=0)
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
@@ -116,30 +92,6 @@ y=['y']
 X=[i for i in data_final_vars if i not in y]
 from sklearn.preprocessing import label_binarize
 
-######################################
-#generate intial regression results with all features
-#cols=['VolCycle','VolCycle_STD','VolCycle_Ratio','VolSec','VolSec_Ratio','RTQ','RTQ_STD','RTQ_Ratio','BR','BR_STD','BR_Ratio','Height','Height STD','Height_Ratio','Length','Length_STD','Length_Ratio','Mean']#,'Median','Std','Skewness','Mean STD','Median_STD','STD_STD','Skewness_STD']
-#cols=['VolSec','RTQ','RTQ_STD','Height STD','Length']#,'Median','Std','Skewness','Mean STD','Median_STD','STD_STD','Skewness_STD']
-#generate final regression results with selected features
-#cols=['VolSec','RTQ','RTQ_STD','BR','Height STD','Length']
-# cols=['VolSec', 'RTQ_STD', 'BR', 'Height STD']
-# cols=['VolSec_Ratio','RTQ','RTQ_STD','BR','BR_Ratio','Height_STD']
-# cols=['VolCycle_Ratio','RTQ','RTQ_STD','BR','BR_STD','BR_Ratio','Height_STD','Height_Ratio','Length_STD']
-
-# cols=['BVC_AVG','BVC_SD','WA_SD','BVC_NORM','BVT_NORM','WA_NORM','BVC_SD_NORM','WA_SD_NORM','RTQ_AVG','RTQ_SD','RTQ_NORM','RTQ_SD_NORM','BR_AVG','WL_SD','BR_SD','BR_NORM','WL_NORM','BR_SD_NORM']
-# cols=[                   'WA_SD','BVC_NORM','BVT_NORM',                                     'RTQ_AVG','RTQ_SD',                         'BR_AVG','WL_SD','BR_SD','BR_NORM','WL_NORM','BR_SD_NORM']
-
-# cols = ['BVC_AVG','BVC_SD', 'BVC_NORM', 'RTQ_AVG','RTQ_SD', 'BR_AVG','BR_SD','WA_SD','WA_NORM','WL_SD']
-# cols=['BVC_NORM','BVC_SD','RTQ_AVG','RTQ_SD','BR_AVG', 'BR_SD','WA_SD','WA_NORM']
-
-
-#cols=['VolCycle_STD','VolCycle_Ratio','RTQ_STD','BR','BR_Ratio','BR_STD','Height_STD','Height_Ratio']
-#cols=['Height_STD','VolSec','RTQ','RTQ_STD','RTQ_Ratio','BR','BR_STD', 'BR_Ratio']
-
-# X=os_data_X[cols]
-# y=os_data_y[targetCol]
-
-
 if isNewFile == True:
     print('***************Processing new file******************')
     cols = ['WA_AVG','BVT_AVG','BVC_AVG','BVC_SD','WA_SD','BVC_NORM','BVT_NORM','WA_NORM','RTQ_AVG','RTQ_SD','RTQ_NORM','BR_AVG','WL_AVG','WL_SD','BR_SD','BR_NORM','WL_NORM']
@@ -150,9 +102,6 @@ if isNewFile == True:
     cols = [                             'BVC_SD','WA_SD',           'BVT_NORM','WA_NORM','RTQ_AVG','RTQ_SD','RTQ_NORM',         'WL_AVG','WL_SD']
     cols = [                             'BVC_SD','WA_SD',           'BVT_NORM',          'RTQ_AVG','RTQ_SD','RTQ_NORM',         'WL_AVG','WL_SD']
     cols = [                             'BVC_SD','WA_SD',           'BVT_NORM',          'RTQ_AVG','RTQ_SD',                   'WL_AVG','WL_SD']
-    #cols = ['BVT_NORM','RTQ_AVG','RTQ_SD','BR_SD','WL_NORM']#Best ST
-    #cols = ['BVT_AVG','RTQ_AVG', 'WA_SD', 'WL_AVG','WL_SD']
-    #cols=['BVT_NORM','RTQ_AVG','WL_AVG','WL_SD','WL_NORM']
     cols = ['WA_AVG','BVT_AVG','BVC_AVG','BVC_NORM','BVT_NORM','WA_NORM','RTQ_AVG','RTQ_NORM','WL_AVG','WL_SD','BR_NORM']
     cols = ['WA_AVG','BVC_AVG','BVT_NORM','RTQ_AVG','WL_AVG','WL_SD']
     #8
@@ -160,33 +109,12 @@ if isNewFile == True:
     #9
     cols = ['WA_AVG','BVT_AVG','BVT_NORM','WA_NORM','RTQ_AVG','RTQ_NORM','WL_AVG','BR_NORM']
     cols = ['BVT_NORM','RTQ_AVG','RTQ_NORM','WL_AVG','WL_SD','WA_SD']
-    #data.to_csv(csvname+'_log.csv')
-    #10
-    # cols = ['WA_AVG','BVT_AVG','BVC_NORM','RTQ_AVG','RTQ_NORM','WL_AVG','BR_NORM','WL_SD','WA_SD']
-    # cols = ['WA_AVG','BVT_AVG','BVC_NORM','RTQ_NORM','WL_AVG','WL_SD','WA_SD']
-    # cols = ['BVT_AVG','RTQ_NORM','WL_AVG','WA_SD']
 
 else:
     print('$$$$$$$$$$$$$$$$$$Processing OLD file$$$$$$$$$$$$$$$$')
     #keep all
     cols=['VolCycle','VolCycle_STD','VolCycle_Ratio','VolSec','VolSec_Ratio','RTQ','RTQ_STD','RTQ_Ratio','BR','BR_Ratio','Height','Height_STD','Height_Ratio','Length','Length_STD','Length_Ratio']
-    #Traditional BR
-    # cols=['VolCycle','VolCycle_STD','VolCycle_Ratio','VolSec','VolSec_Ratio','RTQ','RTQ_STD','RTQ_Ratio','BR','BR_Ratio','Height','Height_STD',               'Length','Length_STD','Length_Ratio']
-    # cols=['VolCycle','VolCycle_STD','VolCycle_Ratio','VolSec','VolSec_Ratio','RTQ','RTQ_STD','RTQ_Ratio',     'BR_Ratio','Height','Height_STD',               'Length','Length_STD','Length_Ratio']
-    # cols=[           'VolCycle_STD','VolCycle_Ratio','VolSec','VolSec_Ratio','RTQ','RTQ_STD','RTQ_Ratio',     'BR_Ratio','Height','Height_STD',               'Length','Length_STD']
-    # cols=[           'VolCycle_STD','VolCycle_Ratio','VolSec',               'RTQ','RTQ_STD',                            'Height','Height_STD',               'Length','Length_STD']
-    # cols=[           'VolCycle_STD',                                         'RTQ','RTQ_STD',                                     'Height_STD',               'Length','Length_STD']
-    # cols=['VolCycle_STD','RTQ','RTQ_STD','Height_STD','Length','Length_STD']
-    
-    
-    #Instant BR
-    # cols=['VolCycle_STD','VolCycle_Ratio','VolSec','VolSec_Ratio','RTQ','RTQ_STD','BR','BR_Ratio','Height','Height_STD','Height_Ratio','Length','Length_STD','Length_Ratio']
-    # cols=['VolCycle_STD','VolCycle_Ratio','VolSec','VolSec_Ratio','RTQ','RTQ_STD','BR',           'Height','Height_STD','Height_Ratio','Length','Length_STD','Length_Ratio']
-    # cols=['VolCycle_STD','VolCycle_Ratio','VolSec','VolSec_Ratio','RTQ','RTQ_STD','BR',           'Height','Height_STD',               'Length','Length_STD','Length_Ratio']
-    # cols=['VolCycle_STD','VolCycle_Ratio','VolSec','VolSec_Ratio','RTQ',          'BR',           'Height','Height_STD',               'Length','Length_STD','Length_Ratio']
-    # cols=[               'VolCycle_Ratio','VolSec','VolSec_Ratio','RTQ',          'BR',           'Height','Height_STD',               'Length','Length_STD','Length_Ratio']
-    # cols=[                                'VolSec','VolSec_Ratio','RTQ',                                   'Height_STD',               'Length','Length_STD','Length_Ratio']
-    
+ 
     #Wednesday model
     cols=['VolCycle_STD','VolSec_Ratio','RTQ','RTQ_STD','BR','BR_STD','Height_STD','Length','Length_STD', 'Length_Ratio']
     #No SD model
@@ -199,10 +127,6 @@ else:
     cols=['VolCycle_Ratio','VolSec_Ratio','RTQ','BR','Length','Length_STD','Length_Ratio']
     cols=['VolSec_Ratio','RTQ','Length','Length_STD','Length_Ratio']
     
-    cols_PR = ['VolSec_Ratio','RTQ','RTQ_STD','BR','BR_STD','Height','Height_STD','Height_Ratio','Length_STD','Length_Ratio']#best PR, 0.93, 0.94
-    cols_ST = ['VolSec_Ratio','RTQ','RTQ_STD',     'BR_STD',                                                  'Length_Ratio']#best ST, 0.84, 0.80
-    cols_DT = ['VolCycle_STD','Height_STD','Length','Length_STD']#best DT, 0.82, 0.80
-
 #BVC_SD,BVC_NORM,BVT_NORM,BR_AVG,WL_AVG,BR_SD,WA_SD,WL_NORM
 X=os_data_X[cols]
 y=os_data_y[targetCol]
@@ -268,9 +192,6 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_
 model = LogisticRegression(max_iter=300)
 logreg = OneVsRestClassifier(model)
 result = logreg.fit(X_train, y_train)
-# print('?????????????????????????????????????????????')
-# print(result.coef_)
-# print(result.intercept_)
 
 y_score = logreg.fit(X_train, y_train).decision_function(X_test)
 
@@ -285,13 +206,6 @@ from sklearn.metrics import classification_report
 for i in range(n_classes):
     fpr[i], tpr[i], _ = roc_curve(y_test[:, i], y_score[:, i])
     roc_auc[i] = auc(fpr[i], tpr[i])
-    #print out model report
-
-# y_pred = logreg.predict(X_test)
-# print(classification_report(y_test, y_pred))
-
-
-#print('123451234512345123451234512345123451234512345')
 
 # Plot of a ROC curve for a specific class
 plt.figure()
@@ -309,23 +223,11 @@ for i in xList:
         
     plt.plot(fpr[i], tpr[i], label=mylabel)
 
-# for i in range(n_classes):
-#     mylabel=''
-#     if i==0:
-#         mylabel = 'PR ROC curve (area = %0.2f)' % roc_auc[i]
-#     elif i==1:
-#         mylabel = 'ST ROC curve (area = %0.2f)' % roc_auc[i]
-#     elif i==2:
-#         mylabel = 'DT ROC curve (area = %0.2f)' % roc_auc[i]
-        
-#     plt.plot(fpr[i], tpr[i], label=mylabel)
-
 plt.plot([0, 1], [0, 1], 'r--')
 plt.xlim([0.0, 1.0])
 plt.ylim([0.0, 1.05])
 plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
-#plt.title('ROC Curves of Multinomial Results')
 plt.legend(loc="lower right")
 
 if hasGridline:
@@ -334,7 +236,6 @@ else:
     plt.grid(False)
 
 plt.savefig('Figure9.png', format="png",dpi=300)
-#plt.savefig('Multinominial_ROC_NoVolume', dpi=300)
 plt.show()
 
 # #############################################################################
@@ -348,7 +249,6 @@ crossNumber = 3
 cv = StratifiedKFold(n_splits=crossNumber,shuffle=True, random_state=42)
 model = LogisticRegression(max_iter=150)
 logreg = OneVsRestClassifier(model)
-
 
 counter = 0
 cvLabel = ['PR','ST','LT']
