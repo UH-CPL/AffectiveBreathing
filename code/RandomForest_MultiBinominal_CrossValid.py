@@ -154,17 +154,6 @@ def plot_feature_importance(forest):
     forest_importances_err = pd.Series(std, index=feature_names)
     print(forest_importances)
     print(forest_importances_err)
-    
-    # fig, ax = plt.subplots()
-    # forest_importances.plot.bar(yerr=std, ax=ax)
-    # ax.set_title("Feature importances using MDI")
-    # ax.set_ylabel("Mean decrease in impurity")
-    # fig.tight_layout()
-    # plt.grid(False)    
-    
-    # print(figureName+' saved!')
-    # plt.savefig(figureName, format="png",dpi=600)
-    # plt.show()
 
 def rand_cross(y, sessionString, fig, ax, treatment):
     tprs = []
@@ -260,15 +249,9 @@ def rand_predict(y, sessionString):
     rfc.fit(X_train, y_train)
     ax = plt.gca()
     rfc_disp = RocCurveDisplay.from_estimator(rfc, X_test, y_test, ax=ax, alpha=0.8)
-    # svc_disp.plot(ax=ax, alpha=0.8)
-    # plt.show()
-    
-    #print out feature importance
-   #  (pd.Series(rfc.feature_importances_, index=X.columns)
-   # .nlargest(6)
-   # .plot(kind='barh'))  
 
     return accuracy
+
 #adaboost
 from sklearn.ensemble import AdaBoostClassifier
 
