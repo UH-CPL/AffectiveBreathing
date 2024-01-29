@@ -37,3 +37,5 @@ Here are the detail information:
 2. We added tool.py and waveform_process_CASE.py files to process and generate breathing waveform cycles based on CASE database. This code works on assuming the CASE dataset is install in data folder in following directories: ../data/interpolated/physiological/sub_1.csv - sub_30.csv (To obtain CASE dataset, please follow the given link https://springernature.figshare.com/articles/dataset/Metadata_record_for_A_dataset_of_continuous_affect_annotations_and_physiological_signals_for_emotion_analysis/9891446)
 
 It will generate a new feature file called 'caseNew_5_cross.csv'. You can apply the RandomForest and multiLinear_logistic method on this Case feature dataset to valid these two models performance on CASE data set.
+
+If you have question regarding the dataset or code, please feel free to contact me at SUN@UHCL.EDU
