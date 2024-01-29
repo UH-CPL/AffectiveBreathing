@@ -1,3 +1,5 @@
+We have updated our code based on 
+
 This code folder contains python code for research article: "A New Look at Breathing for Affective Studies" submitted to "IEEE TRANSACTIONS ON AFFECTIVE COMPUTING"
 If you only want to run all experiments in one shot, make sure you checkout both 'data' and 'code' folders and their files.
 Then you can run 'runAllScripts.py', it will read in the raw data file 'data\BR_Filtered_Raw.csv', and generate the following files:
@@ -24,3 +26,14 @@ The final result will be saved to a csv file 'featuresNew_12_cross.csv'
 3.2 Then we build a one vs. rest multinominal model and generate model report in Figure 10, and table 3 in the article.
 3.3 Last, we use a 3-fold cross validation process to validate our methods. The results of 3-fold cross validation are given in Figure11a,b,c.
 
+
+
+12/30/2023 Modification
+To support our paper revision, we add following code to support RandomForest model, and to further apply our method on a third party database (CASE database).
+Here are the detail information:
+
+1. We added RandomForest_MultiBinomial_CrossValid.py python code to cross validate the RandomForest results on our dataset.
+
+2. We added tool.py and waveform_process_CASE.py files to process and generate breathing waveform cycles based on CASE database. This code works on assuming the CASE dataset is install in data folder in following directories: ../data/interpolated/physiological/sub_1.csv - sub_30.csv (To obtain CASE dataset, please follow the given link https://springernature.figshare.com/articles/dataset/Metadata_record_for_A_dataset_of_continuous_affect_annotations_and_physiological_signals_for_emotion_analysis/9891446)
+
+It will generate a new feature file called 'caseNew_5_cross.csv'. You can apply the RandomForest and multiLinear_logistic method on this Case feature dataset to valid these two models performance on CASE data set.
