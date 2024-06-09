@@ -37,7 +37,7 @@ csvname = '..\\..\\data_NoPMRB\\featuresNew_9_cross.csv'
 # csvname = '..\\..\\data_NoPMRB\\featuresNew_10_cross.csv'
 # csvname = '..\\DEAP_Dataset\\featuresNew_11_cross_new_arousal.csv'
 csvname = '..\\..\\data_NoPMRB\\featuresNew_12_cross_CleanedNoBaseline.csv'
-csvname = '..\\..\\data_NoPMRB\\featuresNew_12_cross_Clean.csv'
+csvname = 'featuresNew_12_cross.csv'
 isNewFile = False
 if 'cross' in csvname:
     isNewFile = True
